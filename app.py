@@ -31,6 +31,27 @@ def join():
     state.client_event_queues[user_id] = queue.Queue()
     return jsonify({"message": "added"}), 200
 
+@app.route("/completed", methods=["POST"])
+def completed():
+    data = request.json
+    user_id = data.get("user_id")
+    if not user_id:
+        return jsonify({"error": "user_id required"}), 400
+
+    state.queued_users.discard(user_id)
+    state.client_event_queues.pop(user_id, None)
+    if state.isFound == False:
+        state.isFound = True
+        print(f"Game: {state.gameNumber}")
+        username = data.get("username")
+        state.currentWinner = username
+        print(f"Winner: {username}")
+        ticks = data.get("ticks")
+        state.ticksTook = ticks
+        print(f"Ticks: {ticks}")
+        return jsonify({"message": "winner"}), 200
+    return jsonify({"message": "not winner"}), 200
+
 
 @app.route("/events")
 def events():

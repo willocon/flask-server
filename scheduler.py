@@ -29,6 +29,11 @@ def generate_on_startup():
 def batch_generate():
     print("Running 10-minute batch...")
 
+    state.isFound = False
+    state.currentWinner = None
+    state.ticksTook = None
+    state.gameNumber += 1
+
     if not state.queued_users:
         print("No users queued.")
         return
