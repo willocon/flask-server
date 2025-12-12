@@ -32,9 +32,9 @@ def batch_generate():
     state.isFound = False
     state.currentWinner = None
     state.ticksTook = None
-    state.gameNumber += 1
+    state.incrementGameNumber(state.gameNumber)
 
-    if not state.queued_users:
+    if (len(state.queued_users) == 0):
         print("No users queued.")
         return
 
@@ -57,8 +57,6 @@ def batch_generate():
             })
     for user in list(state.queued_users):    
         state.client_event_queues[user].put(payload)
-
-    state.queued_users.clear()
 
     print("Assigned image link & pushed SSE events.")
 

@@ -2,6 +2,8 @@ from flask import Flask, request, jsonify, send_from_directory, Response
 from flask_cors import CORS
 from scheduler import start_scheduler, generate_on_startup
 
+import atexit
+
 import os
 import queue
 import json
@@ -37,9 +39,9 @@ def completed():
     user_id = data.get("user_id")
     if not user_id:
         return jsonify({"error": "user_id required"}), 400
+    if user_id not in state.queued_users:
+        return jsonify({"error": "user_id not in game"}), 400
 
-    state.queued_users.discard(user_id)
-    state.client_event_queues.pop(user_id, None)
     if state.isFound == False:
         state.isFound = True
         print(f"Game: {state.gameNumber}")
@@ -49,8 +51,22 @@ def completed():
         ticks = data.get("ticks")
         state.ticksTook = ticks
         print(f"Ticks: {ticks}")
+        with open("games.log", "a") as f:
+            f.write(f"{state.gameNumber},{username},{ticks}\n")
+            f.close()
         return jsonify({"message": "winner"}), 200
     return jsonify({"message": "not winner"}), 200
+
+@app.route("/leave", methods=["POST"])
+def leave():
+    data = request.json
+    user_id = data.get("user_id")
+    if not user_id:
+        return jsonify({"error": "user_id required"}), 400
+
+    state.queued_users.discard(user_id)
+    state.client_event_queues.pop(user_id, None)
+    return jsonify({"message": "removed"}), 200
 
 
 @app.route("/events")
@@ -90,10 +106,13 @@ def serve_image(filename):
 def serve_csv(filename):
     return send_from_directory(IMAGE_DIR, filename)
 
-
+def exit_handler():
+    print("Shutting down scheduler...")
+    state.incrementGameNumber(state.gameNumber)
 
 if __name__ == "__main__":
     os.makedirs(IMAGE_DIR, exist_ok=True)
     generate_on_startup()
     start_scheduler()
-    app.run(debug=True, threaded=True)
+    atexit.register(exit_handler)
+    app.run(debug=True, threaded=True, use_reloader=False)
