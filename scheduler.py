@@ -3,12 +3,15 @@ import json
 import random
 import shutil
 import state
+import evaluation
 
 def generate_on_startup():
     global current_image_name
     global current_csv_name
 
     print("selecting startup image + CSV...")
+
+    state.incrementGameNumber(state.getGameNumber())
 
     # randomly pick an image
     imageNum = random.randint(40,40)
@@ -29,10 +32,11 @@ def generate_on_startup():
 def batch_generate():
     print("Running 10-minute batch...")
 
+    evaluation.evaluatePlayers()
+    state.usernameSet.clear()
     state.isFound = False
     state.currentWinner = None
-    state.ticksTook = None
-    state.incrementGameNumber(state.gameNumber)
+    state.incrementGameNumber(state.getGameNumber())
 
     if (len(state.queued_users) == 0):
         print("No users queued.")

@@ -5,7 +5,8 @@ current_csv_name = None
 
 isFound = False
 currentWinner = None
-ticksTook = None
+score = None
+usernameSet = set()
 
 def getGameNumber():
     try:
@@ -15,8 +16,6 @@ def getGameNumber():
     except FileNotFoundError:
         number = 0
     return number
-
-gameNumber = getGameNumber()
 
 queued_users = set()
 client_event_queues = {}

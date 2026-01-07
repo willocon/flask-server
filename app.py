@@ -3,23 +3,18 @@ from flask_cors import CORS
 from scheduler import start_scheduler, generate_on_startup
 
 import atexit
+import datetime
 
 import os
 import queue
 import json
 import state
+import evaluation
 
 app = Flask(__name__)
 CORS(app)
 
 IMAGE_DIR = "images"
-
-
-# queued_users = set()
-# client_event_queues = {}  # user_id -> Queue()
-
-# # For storing URL assigned this batch
-# ready_links = {}  # user_id -> image_url
 
 
 @app.route("/join", methods=["POST"])
@@ -42,19 +37,31 @@ def completed():
     if user_id not in state.queued_users:
         return jsonify({"error": "user_id not in game"}), 400
 
+    if state.usernameSet.__contains__(data.get("username")):
+        return jsonify({"error": "user already completed"}), 400
+    
+    state.usernameSet.add(data.get("username"))
+
     if state.isFound == False:
         state.isFound = True
-        print(f"Game: {state.gameNumber}")
+        print(f"Game: {state.getGameNumber()}")
         username = data.get("username")
         state.currentWinner = username
         print(f"Winner: {username}")
-        ticks = data.get("ticks")
-        state.ticksTook = ticks
-        print(f"Ticks: {ticks}")
-        with open("games.log", "a") as f:
-            f.write(f"{state.gameNumber},{username},{ticks}\n")
+        currenttime = datetime.datetime.now()
+        score = 1000-round(((currenttime.minute%10)*60+currenttime.second)/0.6)
+        state.score = score
+        print(f"Score: {score}")
+        with open("currentgame.log", "a") as f:
+            f.write(f"{username},{score},{True}\n")
             f.close()
         return jsonify({"message": "winner"}), 200
+    else:
+        currenttime = datetime.datetime.now()
+        score = 1000-round(((currenttime.minute%10)*60+currenttime.second)/0.6)
+        with open("currentgame.log", "a") as f:
+            f.write(f"{data.get('username')},{score},{False}\n")
+            f.close()
     return jsonify({"message": "not winner"}), 200
 
 @app.route("/leave", methods=["POST"])
@@ -108,7 +115,7 @@ def serve_csv(filename):
 
 def exit_handler():
     print("Shutting down scheduler...")
-    state.incrementGameNumber(state.gameNumber)
+    evaluation.evaluatePlayers()
 
 if __name__ == "__main__":
     os.makedirs(IMAGE_DIR, exist_ok=True)
