@@ -4,4 +4,4 @@ RUN pip install pipenv
 WORKDIR /app
 COPY . .
 RUN pipenv install --system
-CMD gunicorn app:app -b 0.0.0.0:7307
+CMD gunicorn app:app -b 0.0.0.0:8080
