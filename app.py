@@ -16,6 +16,9 @@ CORS(app)
 
 IMAGE_DIR = "images"
 
+@app.route("/")
+def hello():
+	return "Hello World!"
 
 @app.route("/join", methods=["POST"])
 def join():

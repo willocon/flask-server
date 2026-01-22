@@ -1,7 +1,7 @@
 /.DS_Store
 /images
-/app/games.log
-/app/gameNum.txt
+/games.log
+/gameNum.txt
 /__pycache__
-/app/leaderboard.log
-/app/currentgame.log
+/leaderboard.log
+/currentgame.log
