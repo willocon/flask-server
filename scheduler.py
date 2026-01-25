@@ -48,11 +48,11 @@ def batch_generate():
 
     image_name = "screenshot.png"
     state.current_image_name = image_name
-    image_url = f"/{IMAGE_DIR}/{image_name}"
+    image_url = f"/images/{image_name}"
 
     csv_name = "coords.csv"
     state.current_csv_name = csv_name
-    csv_url = f"/{IMAGE_DIR}/{csv_name}"
+    csv_url = f"/images/{csv_name}"
     # randomly pick an image
     imageNum = random.randint(1,50)
     shutil.copy(f"{IMAGE_DIR}/{imageNum}/screenshot.png", f"{IMAGE_DIR}/screenshot.png")
