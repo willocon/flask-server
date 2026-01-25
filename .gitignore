@@ -1,7 +1,4 @@
 /.DS_Store
 /images
-/games.log
-/gameNum.txt
+/logs
 /__pycache__
-/leaderboard.log
-/currentgame.log

@@ -15,6 +15,17 @@ app = Flask(__name__)
 CORS(app)
 
 IMAGE_DIR = "images"
+LOG_DIR = "/logs"
+
+def exit_handler():
+    print("Shutting down scheduler...")
+    evaluation.evaluatePlayers()
+
+os.makedirs(IMAGE_DIR, exist_ok=True)
+os.makedirs(LOG_DIR, exist_ok=True)
+generate_on_startup()
+start_scheduler()
+atexit.register(exit_handler)
 
 @app.route("/")
 def hello():
@@ -55,14 +66,14 @@ def completed():
         score = 1000-round(((currenttime.minute%10)*60+currenttime.second)/0.6)
         state.score = score
         print(f"Score: {score}")
-        with open("currentgame.log", "a") as f:
+        with open(os.path.join(LOG_DIR, "currentgame.log"), "a") as f:
             f.write(f"{username},{score},{True}\n")
             f.close()
         return jsonify({"message": "winner"}), 200
     else:
         currenttime = datetime.datetime.now()
         score = 1000-round(((currenttime.minute%10)*60+currenttime.second)/0.6)
-        with open("currentgame.log", "a") as f:
+        with open(os.path.join(LOG_DIR, "currentgame.log"), "a") as f:
             f.write(f"{data.get('username')},{score},{False}\n")
             f.close()
     return jsonify({"message": "not winner"}), 200
@@ -89,21 +100,21 @@ def events():
 
     def stream():
         # send current image + CSV immediately if available
-        if state.current_image_name or state.current_csv_name:
-            payload = {}
-
-            if state.current_image_name:
-                payload["image_url"] = f"/images/{state.current_image_name}"
-
-            if state.current_csv_name:
-                payload["csv_url"] = f"/images/{state.current_csv_name}"
-
+        if state.current_image_name and state.current_csv_name:
+            payload = {
+                "image_url": f"/images/{state.current_image_name}",
+                "csv_url": f"/images/{state.current_csv_name}"
+            }
             yield f"event: ready\ndata: {json.dumps(payload)}\n\n"
 
-        # normal streaming events
+        # normal streaming events with frequent keepalives
         while True:
-            msg = q.get()
-            yield f"event: ready\ndata: {msg}\n\n"
+            try:
+                msg = q.get(timeout=2)  # Wait max 2 seconds
+                yield f"event: ready\ndata: {msg}\n\n"
+            except queue.Empty:
+                # Send keepalive comment every 2 seconds
+                yield ": keepalive\n\n"
 
     return Response(stream(), mimetype="text/event-stream")
 
@@ -116,13 +127,5 @@ def serve_image(filename):
 def serve_csv(filename):
     return send_from_directory(IMAGE_DIR, filename)
 
-def exit_handler():
-    print("Shutting down scheduler...")
-    evaluation.evaluatePlayers()
-
 if __name__ == "__main__":
-    os.makedirs(IMAGE_DIR, exist_ok=True)
-    generate_on_startup()
-    start_scheduler()
-    atexit.register(exit_handler)
     app.run(debug=True, threaded=True, use_reloader=False)
