@@ -18,7 +18,7 @@ def generate_on_startup():
     state.incrementGameNumber(state.getGameNumber())
 
     # randomly pick an image
-    imageNum = random.randint(40,40)
+    imageNum = random.randint(1,50)
     shutil.copy(f"{IMAGE_DIR}/{imageNum}/screenshot.png", f"{IMAGE_DIR}/screenshot.png")
     shutil.copy(f"{IMAGE_DIR}/{imageNum}/coords.csv", f"{IMAGE_DIR}/coords.csv")
 
@@ -54,7 +54,7 @@ def batch_generate():
     state.current_csv_name = csv_name
     csv_url = f"/{IMAGE_DIR}/{csv_name}"
     # randomly pick an image
-    imageNum = random.randint(40,40)
+    imageNum = random.randint(1,50)
     shutil.copy(f"{IMAGE_DIR}/{imageNum}/screenshot.png", f"{IMAGE_DIR}/screenshot.png")
     shutil.copy(f"{IMAGE_DIR}/{imageNum}/coords.csv", f"{IMAGE_DIR}/coords.csv")
 
