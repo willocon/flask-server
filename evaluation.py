@@ -3,7 +3,7 @@
 import os
 import state
 
-LOG_DIR = "/logs"
+LOG_DIR = os.getenv("LOG_DIR", "/logs")
 
 def evaluatePlayers():
     with open(os.path.join(LOG_DIR, "currentgame.log"), "r") as f:

@@ -4,6 +4,10 @@ import random
 import shutil
 import state
 import evaluation
+import os
+
+IMAGE_DIR = os.getenv("IMAGE_DIR", "images")
+
 
 def generate_on_startup():
     global current_image_name
@@ -15,8 +19,8 @@ def generate_on_startup():
 
     # randomly pick an image
     imageNum = random.randint(40,40)
-    shutil.copy(f"images/{imageNum}/screenshot.png", "images/screenshot.png")
-    shutil.copy(f"images/{imageNum}/coords.csv", "images/coords.csv")
+    shutil.copy(f"{IMAGE_DIR}/{imageNum}/screenshot.png", f"{IMAGE_DIR}/screenshot.png")
+    shutil.copy(f"{IMAGE_DIR}/{imageNum}/coords.csv", f"{IMAGE_DIR}/coords.csv")
 
     image_name = "screenshot.png"
     state.current_image_name = image_name
@@ -44,16 +48,15 @@ def batch_generate():
 
     image_name = "screenshot.png"
     state.current_image_name = image_name
-    image_url = f"/images/{image_name}"
+    image_url = f"/{IMAGE_DIR}/{image_name}"
 
     csv_name = "coords.csv"
     state.current_csv_name = csv_name
-    csv_url = f"/images/{csv_name}"
-
+    csv_url = f"/{IMAGE_DIR}/{csv_name}"
     # randomly pick an image
     imageNum = random.randint(40,40)
-    shutil.copy(f"images/{imageNum}/screenshot.png", "images/screenshot.png")
-    shutil.copy(f"images/{imageNum}/coords.csv", "images/coords.csv")
+    shutil.copy(f"{IMAGE_DIR}/{imageNum}/screenshot.png", f"{IMAGE_DIR}/screenshot.png")
+    shutil.copy(f"{IMAGE_DIR}/{imageNum}/coords.csv", f"{IMAGE_DIR}/coords.csv")
 
     payload = json.dumps({
                 "image_url": image_url,

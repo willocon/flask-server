@@ -14,8 +14,8 @@ import evaluation
 app = Flask(__name__)
 CORS(app)
 
-IMAGE_DIR = "images"
-LOG_DIR = "/logs"
+IMAGE_DIR = os.getenv("IMAGE_DIR", "images")
+LOG_DIR = os.getenv("LOG_DIR", "/logs")
 
 def exit_handler():
     print("Shutting down scheduler...")
