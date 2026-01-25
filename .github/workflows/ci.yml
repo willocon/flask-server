@@ -14,15 +14,14 @@ jobs:
     runs-on: ubuntu-latest # the OS that this job runs on
     
   # we need write permissions to publish the package
-    permissions: 
+    permissions:
+      contents: read
       packages: write
       
   # the steps that this job consists of
     steps:
     - name: Checkout  # check out our repo
-      uses: actions/checkout@v3
-      with:
-        ssh-key: ${{ secrets.GITHUB_TOKEN }}
+      uses: actions/checkout@v4
     
     - name: Log in to the container registry
       uses: docker/login-action@v2
