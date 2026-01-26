@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Leaderboard</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            max-width: 600px;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Leaderboard</h1>
+    <table border="1">
+        <tr>
+            <th>Username</th>
+            <th>Score</th>
+            <th>Wins</th>
+            <th>Games Played</th>
+        </tr>
+        <tbody id="leaderboard-body">
+            <!-- Leaderboard entries will be populated here -->
+        </tbody>
+    </table>
+    <script>
+        // Fetch and populate leaderboard
+        async function loadLeaderboard() {
+            try {
+                const response = await fetch('/leaderboard-json');
+                const data = await response.json();
+                
+                const tbody = document.getElementById('leaderboard-body');
+                tbody.innerHTML = ''; // Clear existing rows
+                
+                if (Array.isArray(data)) {
+                    data.forEach(entry => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${entry.username}</td>
+                            <td>${entry.score}</td>
+                            <td>${entry.wins}</td>
+                            <td>${entry.totalGames}</td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+                } else if (data.error) {
+                    tbody.innerHTML = `<tr><td colspan="4">Error: ${data.error}</td></tr>`;
+                }
+            } catch (error) {
+                console.error('Failed to load leaderboard:', error);
+                document.getElementById('leaderboard-body').innerHTML = 
+                    `<tr><td colspan="4">Failed to load leaderboard</td></tr>`;
+            }
+        }
+        
+        // Load leaderboard on page load and refresh every 5 seconds
+        loadLeaderboard();
+        setInterval(loadLeaderboard, 5000);
+    </script>
+</body>
+</html>

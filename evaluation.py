@@ -3,7 +3,7 @@
 import os
 import state
 
-LOG_DIR = os.getenv("LOG_DIR", "/logs")
+LOG_DIR = os.getenv("LOG_DIR", "logs")
 
 def evaluatePlayers():
     with open(os.path.join(LOG_DIR, "currentgame.log"), "r") as f:
@@ -17,18 +17,19 @@ def evaluatePlayers():
             lb.close()
         user_found = False
         for i in range(len(lb_lines)):
-            lb_username, lb_score, lb_wins = lb_lines[i].strip().split(",")
+            lb_username, lb_score, lb_wins, lb_total_games_played = lb_lines[i].strip().split(",")
             if lb_username == username:
                 user_found = True
                 lb_score = int(lb_score) + int(score)
                 lb_wins = int(lb_wins) + (1 if winner == "True" else 0)
-                lb_lines[i] = f"{lb_username},{lb_score},{lb_wins}\n"
+                lb_total_games_played = int(lb_total_games_played) + 1
+                lb_lines[i] = f"{lb_username},{lb_score},{lb_wins},{lb_total_games_played}\n"
                 with open(os.path.join(LOG_DIR, "leaderboard.log"),"w") as lb:
                     lb.writelines(lb_lines)
                     lb.close()
                 break
         if not user_found:
-            lb_lines.append(f"{username},{score},{1 if winner == 'True' else 0}\n")
+            lb_lines.append(f"{username},{score},{1 if winner == 'True' else 0},1\n")
             with open(os.path.join(LOG_DIR, "leaderboard.log"),"w") as lb:
                 lb.writelines(lb_lines)
                 lb.close()
@@ -42,15 +43,16 @@ def evaluatePlayers():
         entries = []
         for entry in lb_lines[1:]: # Skip header
             line = entry.strip()
-            name, sc, wins = line.split(",")
+            name, sc, wins, total_games_played = line.split(",")
             sc = int(sc)
             wins = int(wins)
-            entries.append((name, sc, wins))
+            total_games_played = int(total_games_played)
+            entries.append((name, sc, wins, total_games_played))
         # sort by score descending
         entries.sort(key=lambda x: x[1], reverse=True)
-        sorted_lines = [f"{n},{s},{w}\n" for n, s, w in entries]
+        sorted_lines = [f"{n},{s},{w},{t}\n" for n, s, w, t in entries]
         with open(os.path.join(LOG_DIR, "leaderboard.log"),"w") as lb:
-            lb.write("username,score,winner\n")
+            lb.write("username,score,winner,totalGames\n")
             lb.writelines(sorted_lines)
 
 

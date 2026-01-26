@@ -2,7 +2,7 @@
 
 import os
 
-LOG_DIR = os.getenv("LOG_DIR", "/logs")
+LOG_DIR = os.getenv("LOG_DIR", "logs")
 
 current_image_name = None
 current_csv_name = None

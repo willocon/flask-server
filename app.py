@@ -15,7 +15,7 @@ app = Flask(__name__)
 CORS(app)
 
 IMAGE_DIR = os.getenv("IMAGE_DIR", "images")
-LOG_DIR = os.getenv("LOG_DIR", "/logs")
+LOG_DIR = os.getenv("LOG_DIR", "logs")
 
 def exit_handler():
     print("Shutting down scheduler...")
@@ -30,6 +30,10 @@ atexit.register(exit_handler)
 @app.route("/")
 def hello():
 	return "Hello World!"
+
+@app.route("/leaderboard")
+def leaderboard_page():
+    return send_from_directory(".", "leaderboardWP.html")
 
 @app.route("/join", methods=["POST"])
 def join():
@@ -126,6 +130,32 @@ def serve_image(filename):
 @app.route("/csv/<filename>")
 def serve_csv(filename):
     return send_from_directory(IMAGE_DIR, filename)
+
+@app.route("/leaderboard-json")
+def get_leaderboard():
+    leaderboard_path = os.path.join(LOG_DIR, "leaderboard.log")
+    try:
+        with open(leaderboard_path, "r") as f:
+            lines = f.readlines()
+        
+        leaderboard = []
+        # Skip header line
+        for line in lines[1:]:
+            line = line.strip()
+            if line:
+                username, score, wins, total_games = line.split(",")
+                leaderboard.append({
+                    "username": username,
+                    "score": int(score),
+                    "wins": int(wins),
+                    "totalGames": int(total_games)
+                })
+        
+        return jsonify(leaderboard), 200
+    except FileNotFoundError:
+        return jsonify({"error": "Leaderboard not found"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
     app.run(debug=True, threaded=True, use_reloader=False)
