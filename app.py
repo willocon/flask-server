@@ -73,14 +73,14 @@ def completed():
         with open(os.path.join(LOG_DIR, "currentgame.log"), "a") as f:
             f.write(f"{username},{score},{True}\n")
             f.close()
-        return jsonify({"message": "winner"}), 200
+        return jsonify({"message": "winner", "score": score}), 200
     else:
         currenttime = datetime.datetime.now()
         score = 1000-round(((currenttime.minute%10)*60+currenttime.second)/0.6)
         with open(os.path.join(LOG_DIR, "currentgame.log"), "a") as f:
             f.write(f"{data.get('username')},{score},{False}\n")
             f.close()
-    return jsonify({"message": "not winner"}), 200
+    return jsonify({"message": "not winner", "score": score}), 200
 
 @app.route("/leave", methods=["POST"])
 def leave():

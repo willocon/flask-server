@@ -18,7 +18,7 @@ def generate_on_startup():
     state.incrementGameNumber(state.getGameNumber())
 
     # randomly pick an image
-    imageNum = random.randint(1,50)
+    imageNum = random.randint(40,40)
     shutil.copy(f"{IMAGE_DIR}/{imageNum}/screenshot.png", f"{IMAGE_DIR}/screenshot.png")
     shutil.copy(f"{IMAGE_DIR}/{imageNum}/coords.csv", f"{IMAGE_DIR}/coords.csv")
 
