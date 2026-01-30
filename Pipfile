@@ -8,6 +8,7 @@ flask = "*"
 gunicorn = "*"
 flask-cors = "*"
 apscheduler = "*"
+flask-sqlalchemy = "*"
 
 [dev-packages]
 
