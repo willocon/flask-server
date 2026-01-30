@@ -1,70 +1,68 @@
 #evaluation.py
 
-import os
+from models import db, Player, Game, GameResult, CurrentGame
+from sqlalchemy import func
 import state
 
-LOG_DIR = os.getenv("LOG_DIR", "logs")
-
 def evaluatePlayers():
-    with open(os.path.join(LOG_DIR, "currentgame.log"), "r") as f:
-        lines = f.readlines()
-        f.close()
-
-    for line in lines[1:]:  # Skip header
-        username, score, winner = line.strip().split(",")
-        with open(os.path.join(LOG_DIR, "leaderboard.log"),"r") as lb:
-            lb_lines = lb.readlines()
-            lb.close()
-        user_found = False
-        for i in range(len(lb_lines)):
-            lb_username, lb_score, lb_wins, lb_total_games_played = lb_lines[i].strip().split(",")
-            if lb_username == username:
-                user_found = True
-                lb_score = int(lb_score) + int(score)
-                lb_wins = int(lb_wins) + (1 if winner == "True" else 0)
-                lb_total_games_played = int(lb_total_games_played) + 1
-                lb_lines[i] = f"{lb_username},{lb_score},{lb_wins},{lb_total_games_played}\n"
-                with open(os.path.join(LOG_DIR, "leaderboard.log"),"w") as lb:
-                    lb.writelines(lb_lines)
-                    lb.close()
-                break
-        if not user_found:
-            lb_lines.append(f"{username},{score},{1 if winner == 'True' else 0},1\n")
-            with open(os.path.join(LOG_DIR, "leaderboard.log"),"w") as lb:
-                lb.writelines(lb_lines)
-                lb.close()
-
-    # sort leaderboard entries by score (descending)
-    with open(os.path.join(LOG_DIR, "leaderboard.log"),"r") as lb:
-        lb_lines = lb.readlines()
-        lb.close()
-
-    if len(lb_lines) > 1:
-        entries = []
-        for entry in lb_lines[1:]: # Skip header
-            line = entry.strip()
-            name, sc, wins, total_games_played = line.split(",")
-            sc = int(sc)
-            wins = int(wins)
-            total_games_played = int(total_games_played)
-            entries.append((name, sc, wins, total_games_played))
-        # sort by score descending
-        entries.sort(key=lambda x: x[1], reverse=True)
-        sorted_lines = [f"{n},{s},{w},{t}\n" for n, s, w, t in entries]
-        with open(os.path.join(LOG_DIR, "leaderboard.log"),"w") as lb:
-            lb.write("username,score,winner,totalGames\n")
-            lb.writelines(sorted_lines)
-
-
-    total_games = state.getGameNumber()
-
-    for line in lines[1:]:
-        username, score, winner = line.strip().split(",")
-        with open(os.path.join(LOG_DIR, "games.log"), "a") as g:
-            g.write(f"{total_games},{username},{score},{winner}\n")
-            g.close()
-
-    # clear currentgame.log for next game
-    with open(os.path.join(LOG_DIR, "currentgame.log"), "w") as f:
-        f.write("username,score,winner\n")
-        f.close()
+    """Evaluate players from current game and update leaderboard"""
+    # Get all current game entries
+    current_games = CurrentGame.query.all()
+    
+    if not current_games:
+        print("No current game entries to evaluate")
+        return
+    
+    game_number = state.getGameNumber() - 1  # Current game that's ending
+    
+    # Get or create the game record
+    game = Game.query.filter_by(game_number=game_number).first()
+    if not game:
+        game = Game(game_number=game_number)
+        db.session.add(game)
+        db.session.flush()
+    
+    # Process each player's result
+    for current_game_entry in current_games:
+        username = current_game_entry.username
+        score = current_game_entry.score
+        is_winner = current_game_entry.is_winner
+        
+        # Update winner in game record
+        if is_winner and not game.winner_username:
+            game.winner_username = username
+        
+        # Get or create player
+        player = Player.query.filter_by(username=username).first()
+        if not player:
+            player = Player(
+                username=username,
+                total_score=score,
+                total_wins=1 if is_winner else 0,
+                total_games=1
+            )
+            db.session.add(player)
+            db.session.flush()
+        else:
+            # Update player stats
+            player.total_score += score
+            player.total_wins += 1 if is_winner else 0
+            player.total_games += 1
+        
+        # Create game result record
+        game_result = GameResult(
+            game_id=game.id,
+            player_id=player.id,
+            score=score,
+            is_winner=is_winner
+        )
+        db.session.add(game_result)
+    
+    # Commit all changes
+    db.session.commit()
+    
+    # Clear current game table
+    CurrentGame.query.delete()
+    db.session.commit()
+    
+    print(f"Evaluated {len(current_games)} players for game {game_number}")

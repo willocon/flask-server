@@ -8,6 +8,9 @@ import os
 
 IMAGE_DIR = os.getenv("IMAGE_DIR", "images")
 
+# Will be set by app.py
+app = None
+
 
 def generate_on_startup():
     global current_image_name
@@ -35,12 +38,17 @@ def generate_on_startup():
 
 def batch_generate():
     print("Running 10-minute batch...")
-
-    evaluation.evaluatePlayers()
-    state.usernameSet.clear()
-    state.isFound = False
-    state.currentWinner = None
-    state.incrementGameNumber(state.getGameNumber())
+    
+    if app is None:
+        print("Error: app not initialized in scheduler")
+        return
+    
+    with app.app_context():
+        evaluation.evaluatePlayers()
+        state.usernameSet.clear()
+        state.isFound = False
+        state.currentWinner = None
+        state.incrementGameNumber(state.getGameNumber())
 
     if (len(state.queued_users) == 0):
         print("No users queued.")

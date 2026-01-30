@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify, send_from_directory, Response
 from flask_cors import CORS
-from scheduler import start_scheduler, generate_on_startup
+import scheduler
+from models import db, init_db, Player, CurrentGame
 
 import atexit
 import datetime
@@ -14,17 +15,30 @@ import evaluation
 app = Flask(__name__)
 CORS(app)
 
+# Database configuration
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///game.db')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
 IMAGE_DIR = os.getenv("IMAGE_DIR", "images")
 LOG_DIR = os.getenv("LOG_DIR", "logs")
 
 def exit_handler():
     print("Shutting down scheduler...")
-    evaluation.evaluatePlayers()
+    with app.app_context():
+        evaluation.evaluatePlayers()
 
-os.makedirs(IMAGE_DIR, exist_ok=True)
-os.makedirs(LOG_DIR, exist_ok=True)
-generate_on_startup()
-start_scheduler()
+# Initialize database
+init_db(app)
+
+# Set app reference for scheduler
+scheduler.app = app
+
+# Initialize within app context
+with app.app_context():
+    os.makedirs(IMAGE_DIR, exist_ok=True)
+    scheduler.generate_on_startup()
+    scheduler.start_scheduler()
+
 atexit.register(exit_handler)
 
 @app.route("/")
@@ -60,26 +74,40 @@ def completed():
     
     state.usernameSet.add(data.get("username"))
 
+    username = data.get("username")
+    currenttime = datetime.datetime.now()
+    score = 1000-round(((currenttime.minute%10)*60+currenttime.second)/0.6)
+    
     if state.isFound == False:
         state.isFound = True
         print(f"Game: {state.getGameNumber()}")
-        username = data.get("username")
         state.currentWinner = username
         print(f"Winner: {username}")
-        currenttime = datetime.datetime.now()
-        score = 1000-round(((currenttime.minute%10)*60+currenttime.second)/0.6)
         state.score = score
         print(f"Score: {score}")
-        with open(os.path.join(LOG_DIR, "currentgame.log"), "a") as f:
-            f.write(f"{username},{score},{True}\n")
-            f.close()
+        
+        # Save to database
+        current_game = CurrentGame(
+            game_number=state.getGameNumber(),
+            username=username,
+            score=score,
+            is_winner=True
+        )
+        db.session.add(current_game)
+        db.session.commit()
+        
         return jsonify({"message": "winner", "score": score}), 200
     else:
-        currenttime = datetime.datetime.now()
-        score = 1000-round(((currenttime.minute%10)*60+currenttime.second)/0.6)
-        with open(os.path.join(LOG_DIR, "currentgame.log"), "a") as f:
-            f.write(f"{data.get('username')},{score},{False}\n")
-            f.close()
+        # Save to database
+        current_game = CurrentGame(
+            game_number=state.getGameNumber(),
+            username=username,
+            score=score,
+            is_winner=False
+        )
+        db.session.add(current_game)
+        db.session.commit()
+        
     return jsonify({"message": "not winner", "score": score}), 200
 
 @app.route("/leave", methods=["POST"])
@@ -133,27 +161,13 @@ def serve_csv(filename):
 
 @app.route("/leaderboard-json")
 def get_leaderboard():
-    leaderboard_path = os.path.join(LOG_DIR, "leaderboard.log")
     try:
-        with open(leaderboard_path, "r") as f:
-            lines = f.readlines()
+        # Get all players ordered by total score (descending)
+        players = Player.query.order_by(Player.total_score.desc()).all()
         
-        leaderboard = []
-        # Skip header line
-        for line in lines[1:]:
-            line = line.strip()
-            if line:
-                username, score, wins, total_games = line.split(",")
-                leaderboard.append({
-                    "username": username,
-                    "score": int(score),
-                    "wins": int(wins),
-                    "totalGames": int(total_games)
-                })
+        leaderboard = [player.to_dict() for player in players]
         
         return jsonify(leaderboard), 200
-    except FileNotFoundError:
-        return jsonify({"error": "Leaderboard not found"}), 404
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 

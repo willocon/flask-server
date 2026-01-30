@@ -1,8 +1,6 @@
 # state.py
 
-import os
-
-LOG_DIR = os.getenv("LOG_DIR", "logs")
+from models import db, Game
 
 current_image_name = None
 current_csv_name = None
@@ -13,18 +11,15 @@ score = None
 usernameSet = set()
 
 def getGameNumber():
-    try:
-        with open(os.path.join(LOG_DIR, "gameNum.txt"), "r") as f:
-            number = int(f.read().strip())+1
-            f.close()
-    except FileNotFoundError:
-        number = 0
-    return number
+    """Get the next game number from the database"""
+    latest_game = Game.query.order_by(Game.game_number.desc()).first()
+    return (latest_game.game_number + 1) if latest_game else 1
 
 queued_users = set()
 client_event_queues = {}
 
 def incrementGameNumber(gameNum):
-    with open(os.path.join(LOG_DIR, "gameNum.txt"), "w") as f:
-        f.write(str(gameNum))
-        f.close()
+    """Create a new game entry in the database"""
+    new_game = Game(game_number=gameNum)
+    db.session.add(new_game)
+    db.session.commit()
