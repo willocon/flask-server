@@ -3,34 +3,110 @@
 <head>
     <title>Leaderboard</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #3e3529;
+            color: #000;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        h1 {
+            color: #c9a063;
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .table-container {
+            background-color: #342e24;
+            border: 2px solid #1a1611;
+            border-radius: 4px;
+            padding: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            max-width: 800px;
+            width: 100%;
+        }
+        
         table {
             border-collapse: collapse;
             width: 100%;
-            max-width: 600px;
+            background-color: #534940;
         }
+        
         th, td {
-            border: 1px solid black;
-            padding: 10px;
+            padding: 8px 12px;
             text-align: left;
+            border: 1px solid #2a241d;
         }
+        
         th {
-            background-color: #f2f2f2;
+            background-color: #4a3f35;
+            color: #c9a063;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+        }
+        
+        td {
+            background-color: #534940;
+            color: #e0d5c7;
+            font-size: 13px;
+        }
+        
+        tr:nth-child(even) td {
+            background-color: #5f5347;
+        }
+        
+        tr:hover td {
+            background-color: #6b5d4f;
+        }
+        
+        tbody tr {
+            transition: background-color 0.15s ease;
+        }
+        
+        .rank-cell {
+            font-weight: bold;
+            color: #f4e4c1;
+            text-align: center;
+            width: 60px;
+        }
+        
+        .username-cell {
+            color: #ffebb5;
+            font-weight: 500;
         }
     </style>
 </head>
 <body>
-    <h1>Leaderboard</h1>
-    <table border="1">
-        <tr>
-            <th>Username</th>
-            <th>Score</th>
-            <th>Wins</th>
-            <th>Games Played</th>
-        </tr>
-        <tbody id="leaderboard-body">
-            <!-- Leaderboard entries will be populated here -->
-        </tbody>
-    </table>
+    <h1>Hiscores - Leaderboard</h1>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th class="rank-cell">Rank</th>
+                    <th>Username</th>
+                    <th>Score</th>
+                    <th>Wins</th>
+                    <th>Games Played</th>
+                </tr>
+            </thead>
+            <tbody id="leaderboard-body">
+                <!-- Leaderboard entries will be populated here -->
+            </tbody>
+        </table>
+    </div>
     <script>
         // Fetch and populate leaderboard
         async function loadLeaderboard() {
@@ -42,10 +118,11 @@
                 tbody.innerHTML = ''; // Clear existing rows
                 
                 if (Array.isArray(data)) {
-                    data.forEach(entry => {
+                    data.forEach((entry, index) => {
                         const row = document.createElement('tr');
                         row.innerHTML = `
-                            <td>${entry.username}</td>
+                            <td class="rank-cell">${index + 1}</td>
+                            <td class="username-cell">${entry.username}</td>
                             <td>${entry.score}</td>
                             <td>${entry.wins}</td>
                             <td>${entry.totalGames}</td>
@@ -53,12 +130,12 @@
                         tbody.appendChild(row);
                     });
                 } else if (data.error) {
-                    tbody.innerHTML = `<tr><td colspan="4">Error: ${data.error}</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="5">Error: ${data.error}</td></tr>`;
                 }
             } catch (error) {
                 console.error('Failed to load leaderboard:', error);
                 document.getElementById('leaderboard-body').innerHTML = 
-                    `<tr><td colspan="4">Failed to load leaderboard</td></tr>`;
+                    `<tr><td colspan="5">Failed to load leaderboard</td></tr>`;
             }
         }
         
