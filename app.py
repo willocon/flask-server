@@ -139,14 +139,12 @@ def events():
             }
             yield f"event: ready\ndata: {json.dumps(payload)}\n\n"
 
-        # normal streaming events with frequent keepalives
-        while True:
-            try:
-                msg = q.get(timeout=2)  # Wait max 2 seconds
-                yield f"event: ready\ndata: {msg}\n\n"
-            except queue.Empty:
-                # Send keepalive comment every 2 seconds
-                yield ": keepalive\n\n"
+        # send first available message
+        try:
+            msg = q.get(timeout=2)  # Wait max 2 seconds
+            yield f"event: ready\ndata: {msg}\n\n"
+        except queue.Empty:
+            pass
 
     return Response(stream(), mimetype="text/event-stream")
 
