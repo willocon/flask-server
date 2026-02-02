@@ -87,10 +87,47 @@
             color: #ffebb5;
             font-weight: 500;
         }
+        
+        .pagination {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .pagination button {
+            background-color: #4a3f35;
+            color: #c9a063;
+            border: 2px solid #2a241d;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: bold;
+            border-radius: 3px;
+            transition: all 0.2s ease;
+        }
+        
+        .pagination button:hover:not(:disabled) {
+            background-color: #5f5347;
+            border-color: #c9a063;
+        }
+        
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .pagination .page-info {
+            color: #c9a063;
+            font-size: 14px;
+            font-weight: bold;
+            margin: 0 10px;
+        }
     </style>
 </head>
 <body>
-    <h1>Hiscores - Leaderboard</h1>
+    <h1>Gielinor Travels - Hiscores</h1>
     <div class="table-container">
         <table>
             <thead>
@@ -107,30 +144,81 @@
             </tbody>
         </table>
     </div>
+    <div class="pagination">
+        <button id="prev-btn" onclick="previousPage()">« Previous</button>
+        <span class="page-info">Page <span id="current-page">1</span> of <span id="total-pages">1</span></span>
+        <button id="next-btn" onclick="nextPage()">Next »</button>
+    </div>
     <script>
+        let allData = [];
+        let currentPage = 1;
+        const entriesPerPage = 5;
+        
+        function renderPage() {
+            const tbody = document.getElementById('leaderboard-body');
+            tbody.innerHTML = '';
+            
+            const startIndex = (currentPage - 1) * entriesPerPage;
+            const endIndex = startIndex + entriesPerPage;
+            const pageData = allData.slice(startIndex, endIndex);
+            
+            if (pageData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5">No entries found</td></tr>';
+                return;
+            }
+            
+            pageData.forEach((entry, index) => {
+                const row = document.createElement('tr');
+                const actualRank = startIndex + index + 1;
+                row.innerHTML = `
+                    <td class="rank-cell">${actualRank}</td>
+                    <td class="username-cell">${entry.username}</td>
+                    <td>${entry.score}</td>
+                    <td>${entry.wins}</td>
+                    <td>${entry.totalGames}</td>
+                `;
+                tbody.appendChild(row);
+            });
+            
+            updatePaginationControls();
+        }
+        
+        function updatePaginationControls() {
+            const totalPages = Math.ceil(allData.length / entriesPerPage);
+            document.getElementById('current-page').textContent = currentPage;
+            document.getElementById('total-pages').textContent = totalPages;
+            
+            document.getElementById('prev-btn').disabled = currentPage === 1;
+            document.getElementById('next-btn').disabled = currentPage >= totalPages;
+        }
+        
+        function previousPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                renderPage();
+            }
+        }
+        
+        function nextPage() {
+            const totalPages = Math.ceil(allData.length / entriesPerPage);
+            if (currentPage < totalPages) {
+                currentPage++;
+                renderPage();
+            }
+        }
+        
         // Fetch and populate leaderboard
         async function loadLeaderboard() {
             try {
                 const response = await fetch('/leaderboard-json');
                 const data = await response.json();
                 
-                const tbody = document.getElementById('leaderboard-body');
-                tbody.innerHTML = ''; // Clear existing rows
-                
                 if (Array.isArray(data)) {
-                    data.forEach((entry, index) => {
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td class="rank-cell">${index + 1}</td>
-                            <td class="username-cell">${entry.username}</td>
-                            <td>${entry.score}</td>
-                            <td>${entry.wins}</td>
-                            <td>${entry.totalGames}</td>
-                        `;
-                        tbody.appendChild(row);
-                    });
+                    allData = data;
+                    renderPage();
                 } else if (data.error) {
-                    tbody.innerHTML = `<tr><td colspan="5">Error: ${data.error}</td></tr>`;
+                    document.getElementById('leaderboard-body').innerHTML = 
+                        `<tr><td colspan="5">Error: ${data.error}</td></tr>`;
                 }
             } catch (error) {
                 console.error('Failed to load leaderboard:', error);
