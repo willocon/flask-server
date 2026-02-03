@@ -52,8 +52,10 @@ class GameResult(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     game_id = db.Column(db.Integer, db.ForeignKey('games.id'), nullable=False)
     player_id = db.Column(db.Integer, db.ForeignKey('players.id'), nullable=False)
+    username = db.Column(db.String(100), nullable=False)
     score = db.Column(db.Integer, nullable=False)
     is_winner = db.Column(db.Boolean, default=False, nullable=False)
+    coords = db.Column(db.String(200)) 
     completed_at = db.Column(db.DateTime, default=datetime.utcnow)
     
     def __repr__(self):

@@ -3,6 +3,7 @@
 from models import db, Player, Game, GameResult, CurrentGame
 from sqlalchemy import func
 import state
+import os
 
 def evaluatePlayers():
     """Evaluate players from current game and update leaderboard"""
@@ -12,6 +13,16 @@ def evaluatePlayers():
     if not current_games:
         print("No current game entries to evaluate")
         return
+    
+    # Read coordinates from the CSV file
+    coords_data = None
+    csv_path = os.path.join("images", "coords.csv")
+    if os.path.exists(csv_path):
+        try:
+            with open(csv_path, 'r') as f:
+                coords_data = f.read().strip()
+        except Exception as e:
+            print(f"Error reading coordinates file: {e}")
     
     game_number = state.getGameNumber() - 1  # Current game that's ending
     
@@ -53,8 +64,10 @@ def evaluatePlayers():
         game_result = GameResult(
             game_id=game.id,
             player_id=player.id,
+            username=username,
             score=score,
-            is_winner=is_winner
+            is_winner=is_winner,
+            coords=coords_data
         )
         db.session.add(game_result)
     
