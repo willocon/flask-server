@@ -42,12 +42,12 @@ with app.app_context():
 atexit.register(exit_handler)
 
 @app.route("/")
-def hello():
-	return "Hello World!"
-
-@app.route("/leaderboard")
 def leaderboard_page():
     return send_from_directory(".", "leaderboardWP.html")
+
+# @app.route("/leaderboard")
+# def leaderboard_page():
+#     return send_from_directory(".", "leaderboardWP.html")
 
 @app.route("/join", methods=["POST"])
 def join():
@@ -133,9 +133,12 @@ def events():
     def stream():
         # send current image + CSV immediately if available
         if state.current_image_name and state.current_csv_name:
+            current_time = datetime.datetime.now()
+            minutesAndSeconds = current_time.minute % 10 * 60 + current_time.second
             payload = {
                 "image_url": f"/images/{state.current_image_name}",
-                "csv_url": f"/images/{state.current_csv_name}"
+                "csv_url": f"/images/{state.current_csv_name}",
+                "time": minutesAndSeconds
             }
             yield f"event: ready\ndata: {json.dumps(payload)}\n\n"
 
