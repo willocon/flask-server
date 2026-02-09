@@ -124,10 +124,73 @@
             font-weight: bold;
             margin: 0 10px;
         }
+        
+        .nav-links {
+            text-align: center;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .nav-links a {
+            color: #c9a063;
+            text-decoration: none;
+            font-weight: bold;
+            border: 2px solid #2a241d;
+            padding: 8px 16px;
+            border-radius: 3px;
+            transition: all 0.2s ease;
+        }
+        
+        .nav-links a:hover {
+            background-color: #5f5347;
+            border-color: #c9a063;
+            color: #ffebb5;
+        }
+        
+        .nav-links a:visited {
+            color: #b88a4f;
+        }
+        
+        footer {
+            margin-top: 30px;
+            text-align: center;
+            color: #c9a063;
+            font-size: 12px;
+            max-width: 800px;
+            width: 100%;
+        }
+        
+        footer p {
+            margin: 5px 0;
+            color: #c9a063;
+        }
+        
+        a {
+            color: #bca37d;
+            text-decoration: none;
+        }
+        
+        a:hover {
+            color: #ffebb5;
+            text-decoration: underline;
+        }
+        
+        a:visited {
+            color: #b88a4f;
+        }
     </style>
 </head>
 <body>
     <h1>Gielinor Travels - Hiscores</h1>
+    
+    <div class="nav-links">
+        <a href="/">About</a>
+        <a href="/privacypolicy">Privacy Policy</a>
+    </div>
+    
     <div class="table-container">
         <table>
             <thead>
@@ -152,7 +215,7 @@
     <script>
         let allData = [];
         let currentPage = 1;
-        const entriesPerPage = 5;
+        const entriesPerPage = 20;
         
         function renderPage() {
             const tbody = document.getElementById('leaderboard-body');
@@ -231,5 +294,9 @@
         loadLeaderboard();
         setInterval(loadLeaderboard, 5000);
     </script>
+    
+    <footer>
+        <p>&copy; 2026 <a href="https://github.com/willocon/gielinorTravels">Gielinor Travels</a> | <a href="/leaderboard">Leaderboard</a> | Created by Will O'Connor</p>
+    </footer>
 </body>
 </html>

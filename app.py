@@ -42,12 +42,16 @@ with app.app_context():
 atexit.register(exit_handler)
 
 @app.route("/")
+def about_page():
+    return send_from_directory(".", "about.html")
+
+@app.route("/leaderboard")
 def leaderboard_page():
     return send_from_directory(".", "leaderboardWP.html")
 
-# @app.route("/leaderboard")
-# def leaderboard_page():
-#     return send_from_directory(".", "leaderboardWP.html")
+@app.route("/privacypolicy")
+def privacy_policy_page():
+    return send_from_directory(".", "privacypolicy.html")
 
 @app.route("/join", methods=["POST"])
 def join():
