@@ -5,6 +5,8 @@ from sqlalchemy import func
 import state
 import os
 
+IMAGE_DIR = os.getenv("IMAGE_DIR", "images")
+
 def evaluatePlayers():
     """Evaluate players from current game and update leaderboard"""
     # Get all current game entries
@@ -16,7 +18,7 @@ def evaluatePlayers():
     
     # Read coordinates from the CSV file
     coords_data = None
-    csv_path = os.path.join("images", "coords.csv")
+    csv_path = os.path.join(IMAGE_DIR, "coords.csv")
     if os.path.exists(csv_path):
         try:
             with open(csv_path, 'r') as f:
