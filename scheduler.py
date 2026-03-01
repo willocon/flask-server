@@ -1,10 +1,11 @@
 from apscheduler.schedulers.background import BackgroundScheduler
 import json
-import random
 import shutil
 import state
 import evaluation
 import os
+import time
+import screenshotScript
 
 IMAGE_DIR = os.getenv("IMAGE_DIR", "images")
 
@@ -21,9 +22,24 @@ def generate_on_startup():
     state.incrementGameNumber(state.getGameNumber())
 
     # randomly pick an image
-    imageNum = random.randint(1,500)
-    shutil.copy(f"{IMAGE_DIR}/{imageNum}/screenshot.png", f"{IMAGE_DIR}/screenshot.png")
-    shutil.copy(f"{IMAGE_DIR}/{imageNum}/coords.csv", f"{IMAGE_DIR}/coords.csv")
+    ready = False
+    screenshotScript.generate_screenshot()
+
+    while not ready:
+        time.sleep(1)
+        ready = screenshotScript.get_ready_state()
+
+    # move location into the exposed endpoint
+    shutil.copy(f"{IMAGE_DIR}/next/screenshot.png", f"{IMAGE_DIR}/screenshot.png")
+    shutil.copy(f"{IMAGE_DIR}/next/coords.csv", f"{IMAGE_DIR}/coords.csv")
+
+    # generate the next location that will be used next game
+    ready = False
+    screenshotScript.generate_screenshot()
+
+    while not ready:
+        time.sleep(1)
+        ready = screenshotScript.get_ready_state()
 
     image_name = "screenshot.png"
     state.current_image_name = image_name
@@ -61,10 +77,9 @@ def batch_generate():
     csv_name = "coords.csv"
     state.current_csv_name = csv_name
     csv_url = f"/images/{csv_name}"
-    # randomly pick an image
-    imageNum = random.randint(1,500)
-    shutil.copy(f"{IMAGE_DIR}/{imageNum}/screenshot.png", f"{IMAGE_DIR}/screenshot.png")
-    shutil.copy(f"{IMAGE_DIR}/{imageNum}/coords.csv", f"{IMAGE_DIR}/coords.csv")
+    # move the previously generated image into the exposed endpoint
+    shutil.copy(f"{IMAGE_DIR}/next/screenshot.png", f"{IMAGE_DIR}/screenshot.png")
+    shutil.copy(f"{IMAGE_DIR}/next/coords.csv", f"{IMAGE_DIR}/coords.csv")
 
     payload = json.dumps({
                 "image_url": image_url,
@@ -73,7 +88,15 @@ def batch_generate():
     for user in list(state.queued_users):    
         state.client_event_queues[user].put(payload)
 
-    print("Assigned image link & pushed SSE events.")
+    # generate the next location that will be used next game
+    ready = False
+    screenshotScript.generate_screenshot()
+
+    while not ready:
+        time.sleep(1)
+        ready = screenshotScript.get_ready_state()
+
+    print("Assigned image link & pushed SSE events. Next image generated.")
 
 
 def start_scheduler():

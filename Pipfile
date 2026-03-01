@@ -9,6 +9,8 @@ gunicorn = "*"
 flask-cors = "*"
 apscheduler = "*"
 flask-sqlalchemy = "*"
+selenium = "*"
+pillow = "*"
 
 [dev-packages]
 

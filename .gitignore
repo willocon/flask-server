@@ -1,5 +1,7 @@
 /.DS_Store
-/images
+/images/[0-9]*
+/images/Archive.zip
 /logs
 /__pycache__
 /instance
+/visualise.py
