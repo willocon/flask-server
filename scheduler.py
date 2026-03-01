@@ -34,6 +34,7 @@ def generate_on_startup():
     # csv_url = f"/images/{csv_name}"
 
     print("Startup files generated.")
+    print(imageNum)
 
 
 def batch_generate():
@@ -74,6 +75,7 @@ def batch_generate():
         state.client_event_queues[user].put(payload)
 
     print("Assigned image link & pushed SSE events.")
+    print(imageNum)
 
 
 def start_scheduler():
