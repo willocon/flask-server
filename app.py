@@ -148,7 +148,7 @@ def events():
 
         # send first available message
         try:
-            msg = q.get(timeout=2)  # Wait max 2 seconds
+            msg = q.get(timeout=10)  # Wait max 10 seconds
             yield f"event: ready\ndata: {msg}\n\n"
         except queue.Empty:
             pass
