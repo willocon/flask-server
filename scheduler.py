@@ -66,10 +66,6 @@ def batch_generate():
         state.currentWinner = None
         state.incrementGameNumber(state.getGameNumber())
 
-    if (len(state.queued_users) == 0):
-        print("No users queued.")
-        return
-
     image_name = "screenshot.png"
     state.current_image_name = image_name
     image_url = f"/images/{image_name}"
@@ -95,6 +91,10 @@ def batch_generate():
     while not ready:
         time.sleep(1)
         ready = screenshotScript.get_ready_state()
+        
+    if (len(state.queued_users) == 0):
+        print("No users queued.")
+        return
 
     print("Assigned image link & pushed SSE events. Next image generated.")
 

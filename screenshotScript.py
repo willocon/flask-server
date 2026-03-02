@@ -11,7 +11,7 @@ import graphs as g
 # ---------------- SETTINGS ----------------
 NUM_SCREENSHOTS = 1
 DELAY = 60      # Seconds to wait before screenshot
-CHROME_DRIVER_PATH = "/usr/bin/chromedriver"   # Docker path for Chromium driver
+CHROME_DRIVER_PATH = "./chromedriver"   # Docker path for Chromium driver
 
 # World bounds (fully random)
 MIN_X, MAX_X = 1200, 3900
@@ -414,7 +414,7 @@ def generate_screenshot():
         driver.save_screenshot(filename)
         # crop the center to 1:1
         # current_img_dir = os.path.join(os.getcwd(), "images")
-        # crop_center_square(os.path.join(current_img_dir, "screenshot.png"))
+        crop_center_square(filename)
 
         csv_file = os.path.join(output_dir, "coords.csv")
         
