@@ -165,11 +165,12 @@ def connect_fairy_ring_nodes(graph):
 def dijkstra(graph, start_title, dest_title, constraints):
     import heapq
     queue = [(0, start_title, constraints.GP_budget)]  # (current_time, current_node_title, remaining_GP)
-    dist = {start_title: 0}
+    dist = {start_title: (0, constraints.GP_budget)}  # Track both time and remaining GP for each node
     prev = {}
     while queue:
         current_time, current_title, remaining_GP = heapq.heappop(queue)
-        if current_time > dist.get(current_title, float('inf')):
+        # Check if we've already found a better path to this node
+        if current_title in dist and current_time > dist[current_title][0]:
             continue
         if current_title == dest_title:
             path = []
@@ -181,24 +182,29 @@ def dijkstra(graph, start_title, dest_title, constraints):
                 node_title = prev[node_title]
             path.reverse()
             print("Path:", path)
-            return current_time
+            return current_time, len(path) # return est time and number of nodes
         current_node = graph.nodes[current_title]   
         for edge in current_node.neighbours:
             next_title = edge.to_node.title
-            if edge.is_teleport:
-                if edge.magic_lvl > constraints.max_magic_level:
-                    continue
-                if edge.GP_cost > remaining_GP:
-                    continue
-                next_remaining_GP = remaining_GP - edge.GP_cost
+            
+            # Check GP cost for ALL edges (not just teleports)
+            if edge.GP_cost > remaining_GP:
+                continue
+            
+            # Check magic level for teleports
+            if edge.is_teleport and edge.magic_lvl > constraints.max_magic_level:
+                continue
+            
+            # Check fairy ring constraint
             if edge.is_fairy_ring and not constraints.fairy_rings:
                 continue
-            else:
-                next_remaining_GP = remaining_GP
 
             new_time = current_time + edge.est_time
-            if new_time < dist.get(next_title, float('inf')):
-                dist[next_title] = new_time
+            new_remaining_GP = remaining_GP - edge.GP_cost
+            
+            # Only update if we found a better path (shorter time) to next_title
+            if next_title not in dist or new_time < dist[next_title][0]:
+                dist[next_title] = (new_time, new_remaining_GP)
                 prev[next_title] = current_title
-                heapq.heappush(queue, (new_time, next_title, next_remaining_GP))
-    return float('inf')  # return infinity if no path is found
+                heapq.heappush(queue, (new_time, next_title, new_remaining_GP))
+    return float('inf'), 0  # return infinity and 0 steps if no path is found
