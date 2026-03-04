@@ -124,6 +124,63 @@
             font-weight: bold;
             margin: 0 10px;
         }
+
+        .username-search {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .username-search-controls {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .username-search input {
+            background-color: #4a3f35;
+            color: #e0d5c7;
+            border: 2px solid #2a241d;
+            padding: 8px 12px;
+            border-radius: 3px;
+            font-size: 13px;
+            min-width: 260px;
+        }
+
+        .username-search input:focus {
+            outline: none;
+            border-color: #c9a063;
+        }
+
+        .username-search button {
+            background-color: #4a3f35;
+            color: #c9a063;
+            border: 2px solid #2a241d;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: bold;
+            border-radius: 3px;
+            transition: all 0.2s ease;
+        }
+
+        .username-search button:hover {
+            background-color: #5f5347;
+            border-color: #c9a063;
+        }
+
+        .search-message {
+            color: #c9a063;
+            font-size: 13px;
+            min-height: 18px;
+            text-align: center;
+        }
         
         .nav-links {
             text-align: center;
@@ -233,6 +290,15 @@
         <span class="page-info">Page <span id="current-page">1</span> of <span id="total-pages">1</span></span>
         <button id="next-btn" onclick="nextPage()">Next »</button>
     </div>
+
+    <div class="username-search">
+        <div class="username-search-controls">
+            <input type="text" id="username-search-input" placeholder="Enter username to jump to their page" />
+            <button onclick="jumpToUsernamePage()">Find Username</button>
+        </div>
+        <div id="search-message" class="search-message"></div>
+    </div>
+
     <script>
         let allData = [];
         let currentPage = 1;
@@ -290,6 +356,36 @@
                 renderPage();
             }
         }
+
+        function jumpToUsernamePage() {
+            const input = document.getElementById('username-search-input');
+            const message = document.getElementById('search-message');
+            const query = input.value.trim().toLowerCase();
+
+            if (!query) {
+                message.textContent = 'Please enter a username.';
+                return;
+            }
+
+            const index = allData.findIndex(entry =>
+                entry.username && entry.username.toLowerCase() === query
+            );
+
+            if (index === -1) {
+                message.textContent = 'Username not found on the leaderboard.';
+                return;
+            }
+
+            currentPage = Math.floor(index / entriesPerPage) + 1;
+            renderPage();
+            message.textContent = `Jumped to page ${currentPage} for ${allData[index].username}.`;
+        }
+
+        document.getElementById('username-search-input').addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                jumpToUsernamePage();
+            }
+        });
         
         // Fetch and populate leaderboard
         async function loadLeaderboard() {
