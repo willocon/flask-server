@@ -1,0 +1,172 @@
+Lumbridge,3221,3218,False
+Varrock,3213,3424,False
+Falador,2964,3378,False
+Camelot,2757,3477,False
+Kourend Castle,1637,3671,False
+Ardougne,2662,3305,False
+Civitas Illa Fortis,1680,3134,False
+Watchtower,2549,3113,False
+Trollheim,2883,3673,False
+Ape Atoll,2797,2798,False
+Ardougne Monastery,2595,3215,False
+Barbarion Outpost,2521,3570,False
+Burthorpe,2883,3525,False
+Wintertodt Camp,1624,3960,False
+Emirs Arena,3330,3230,False
+Castle Wars,2442,3090,False
+Fortis Colosseum,1792,3108,False
+Warriors Guild,2882,3546,False
+Champions Guild,3204,3363,False
+Edgeville Monastery,3050,3484,False
+Ranging Guild,2656,3443,False
+Fishing Guild,2610,3391,False
+Mining Guild,3020,3337,False
+Crafting Guild,2936,3284,False
+Cooks Guild,3142,3444,False
+Woodcutting Guild,1668,3504,False
+Farming Guild,1250,3713,False
+Edgeville,3087,3500,False
+Musa Point,2920,3161,False
+Draynor Village,3086,3245,False
+Al Kharid,3273,3163,False
+Miscellania,2539,3860,False
+Grand Exchange,3164,3488,False
+Slayer Tower,3428,3537,False
+Fremennik Dungeon,2794,3615,False
+Stronghold Slayer Cave,2427,3424,False
+Digsite,3351,3408,False
+Fossil Island,3728,3800,False
+Wizards Tower,3104,3163,False
+Jorrals Outpost,2437,3346,False
+Eagles Peak,2320,3485,False
+Mount Karuulm,1308,3807,False
+Mount Quidamortem,1232,3558,False
+Custodia Mountains,1283,3406,False
+Auburnvale,1400,3353,False
+Tal Teklan,1227,3112,False
+Kastori,1371,3041,False
+Aldarin,1392,2935,False
+Lovakengj,1505,3800,False
+Shayzien,1515,3561,False
+Kouren Woodland,1560,3455,False
+Hueycoatl,1513,3286,False
+Cam Torum,1433,3120,False
+Hunters Guild,1557,3041,False
+Colossal Wyrm,1638,2919,False
+Stonecutter Outpost,1745,2960,False
+Twilight Temple,1694,3254,False
+Hosidius,1752,3606,False
+Port Piscarilius,1802,3744,False
+Arceuus,1680,3748,False
+Soul Wars,2211,2847,False
+Ourania Altar,2465,3231,False
+Rellekka,2647,3682,False
+Waterbirth Island,2535,3743,False
+Jatizso,2400,3806,False
+Pirates Cove,2206,3813,False
+Lunar Isle,2107,3903,False
+Corsair Cove,2554,2859,False
+Taverley,2902,3457,False
+Rimmington,2956,3225,False
+Port Sarim,3042,3239,False
+Draynor Manor,3109,3348,False
+Bandit Camp,3178,2979,False
+Pollnivneach,3355,2981,False
+Nardah,3431,2906,False
+Sophanem,3293,2783,False
+Mortton,3488,3282,False
+Burgh de Rott,3498,3216,False
+Barrows,3565,3292,False
+Darkmeyer,3629,3359,False
+Meiyerditch,3615,3261,False
+Port Phasmatys,3679,3476,False
+Slepe,3722,3327,False
+Ruins of Unkah,3169,2839,False
+AIQ,2996,3114,True
+AIR,2700,3247,True
+AIS,1429,3324,True
+AJP,1651,3010,True
+AJR,2780,3613,True
+AKP,3284,2706,True
+AKQ,2319,3619,True
+AKR,1826,3540,True
+AKS,2571,2956,True
+ALP,2503,3636,True
+ALQ,3597,3495,True
+ALS,2644,3495,True
+BIP,3410,3324,True
+BIQ,3251,3095,True
+BIS,2635,3266,True
+BJP,2264,2976,True
+BJS,2150,3070,True
+BKP,2385,3035,True
+BKR,3469,3431,True
+BLR,2740,3351,True
+BLS,1295,3493,True
+CIP,2513,3884,True
+CIQ,2528,3127,True
+CIR,1302,3762,True
+CIS,1639,3868,True
+CJR,2705,3576,True
+CKQ,1359,2941,True
+CKR,2801,3003,True
+CKS,3447,3470,True
+CLR,2740,2738,True
+CLS,2682,3081,True
+DIS,3108,3149,True
+DJP,2658,3230,True
+DJR,1455,3658,True
+DKP,2900,3111,True
+DKR,3129,3496,True
+DKS,2744,3719,True
+DLQ,3423,3016,True
+DLR,2213,3099,True
+start,Lumbridge,120,31,True,False
+start,Varrock,120,25,True,False
+start,Falador,120,37,True,False
+start,Camelot,120,45,True,False
+start,Kourend Castle,240,48,True,False
+start,Ardougne,240,51,True,False
+start,Civitas Illa Fortis,240,54,True,False
+start,Watchtower,240,58,True,False
+start,Trollheim,240,61,True,False
+start,Ape Atoll,240,64,True,False
+start,Ardougne Monastery,0,0,True,False
+start,Barbarion Outpost,90,0,True,False
+start,Burthorpe,90,0,True,False
+start,Wintertodt Camp,90,0,True,False
+start,Emirs Arena,90,0,True,False
+start,Castle Wars,90,0,True,False
+start,Warriors Guild,50,0,True,False
+start,Champions Guild,50,0,True,False
+start,Edgeville Monastery,50,0,True,False
+start,Ranging Guild,50,0,True,False
+start,Fishing Guild,50,0,True,False
+start,Mining Guild,50,0,True,False
+start,Crafting Guild,50,0,True,False
+start,Cooks Guild,50,0,True,False
+start,Woodcutting Guild,50,0,True,False
+start,Farming Guild,50,0,True,False
+start,Edgeville,50,0,True,False
+start,Musa Point,50,0,True,False
+start,Draynor Village,50,0,True,False
+start,Al Kharid,50,0,True,False
+start,Miscellania,50,0,True,False
+start,Grand Exchange,50,0,True,False
+start,Slayer Tower,13,0,True,False
+start,Fremennik Dungeon,13,0,True,False
+start,Stronghold Slayer Cave,13,0,True,False
+start,Digsite,260,0,True,False
+start,Fossil Island,260,0,True,False
+start,Wizards Tower,200,0,True,False
+start,Jorrals Outpost,200,0,True,False
+start,Eagles Peak,200,0,True,False
+Rellekka,Miscellania,0,0,False,True
+Rellekka,Waterbirth Island,1000,0,False,True
+Rellekka,Jatizso,0,0,False,True
+Rellekka,Pirates Cove,0,0,False,True
+Pirates Cove,Lunar Isle,0,0,False,True
+Port Sarim,Port Piscarilius,0,0,False,True
+Rimmington,Ardougne,30,0,False,True
+Al Kharid,Ruins of Unkah,0,0,True,False
+Varrock,Civitas Illa Fortis,0,0,False,True
