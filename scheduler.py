@@ -22,24 +22,16 @@ def generate_on_startup():
     state.incrementGameNumber(state.getGameNumber())
 
     # randomly pick an image
-    ready = False
-    screenshotScript.generate_screenshot()
+    screenshotScript.generate_screenshot(first_run=True)
 
-    while not ready:
-        time.sleep(1)
-        ready = screenshotScript.get_ready_state()
+def first_image_and_csv_ready():
 
     # move location into the exposed endpoint
     shutil.copy(f"{IMAGE_DIR}/next/screenshot.png", f"{IMAGE_DIR}/screenshot.png")
     shutil.copy(f"{IMAGE_DIR}/next/coords.csv", f"{IMAGE_DIR}/coords.csv")
 
     # generate the next location that will be used next game
-    ready = False
-    screenshotScript.generate_screenshot()
-
-    while not ready:
-        time.sleep(1)
-        ready = screenshotScript.get_ready_state()
+    screenshotScript.generate_screenshot(first_run=False)
 
     image_name = "screenshot.png"
     state.current_image_name = image_name
@@ -50,7 +42,7 @@ def generate_on_startup():
     # csv_url = f"/images/{csv_name}"
 
     print("Startup files generated.")
-
+    
 
 def batch_generate():
     print("Running 10-minute batch...")
@@ -86,11 +78,7 @@ def batch_generate():
 
     # generate the next location that will be used next game
     ready = False
-    screenshotScript.generate_screenshot()
-
-    while not ready:
-        time.sleep(1)
-        ready = screenshotScript.get_ready_state()
+    screenshotScript.generate_screenshot(first_run=False)
         
     if (len(state.queued_users) == 0):
         print("No users queued.")

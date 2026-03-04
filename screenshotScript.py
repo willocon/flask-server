@@ -7,11 +7,12 @@ from selenium.webdriver.chrome.service import Service
 from PIL import Image
 
 import graphs as g
+import scheduler
 
 # ---------------- SETTINGS ----------------
 NUM_SCREENSHOTS = 1
 DELAY = 60      # Seconds to wait before screenshot
-CHROME_DRIVER_PATH = "./chromedriver"   # Docker path for Chromium driver
+CHROME_DRIVER_PATH = "/usr/bin/chromedriver"   # Docker path for Chromium driver
 
 # World bounds (fully random)
 MIN_X, MAX_X = 1200, 3900
@@ -22,11 +23,7 @@ MIN_YAW, MAX_YAW = 0, 2047
 # Reachability constraints
 MAGIC_LEVEL = 30
 GP_BUDGET = 500
-FAIRY_RINGS = True
-
-# Scheduler tools
-global is_ready
-is_ready = False
+FAIRY_RINGS = False
 
 # -------------------------------------------
 
@@ -348,15 +345,9 @@ def check_reachable(x, z):
         return False
     return True
 
-    
-def get_ready_state():
-    global is_ready
-    return is_ready
 
-def generate_screenshot():
+def generate_screenshot(first_run):
     #screenshot generator
-    global is_ready
-    is_ready = False
 
     output_dir = "images/next"
     os.makedirs(output_dir, exist_ok=True)
@@ -432,14 +423,13 @@ def generate_screenshot():
             writer = csv.writer(file)
             # write one row with this screenshot’s data
             writer.writerow([x, z, 0])
-
         
-
         print(f"Saved {filename}")
 
     driver.quit()
-    is_ready = True
     print("All screenshots complete!")
+    if first_run:
+        scheduler.first_image_and_csv_ready()
 
 if __name__ == "__main__":
-    generate_screenshot()
+    generate_screenshot(first_run=True)
