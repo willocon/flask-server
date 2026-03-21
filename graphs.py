@@ -181,8 +181,7 @@ def dijkstra(graph, start_title, dest_title, constraints):
                     break
                 node_title = prev[node_title]
             path.reverse()
-            print("Path:", path)
-            return current_time, len(path) # return est time and number of nodes
+            return current_time, len(path), path # return est time and number of nodes
         current_node = graph.nodes[current_title]   
         for edge in current_node.neighbours:
             next_title = edge.to_node.title

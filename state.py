@@ -4,11 +4,14 @@ from models import db, Game
 
 current_image_name = None
 current_csv_name = None
+current_difficulty = None
 
 isFound = False
 currentWinner = None
 score = None
 usernameSet = set()
+
+difficultyString = None
 
 def getGameNumber():
     """Get the next game number from the database"""

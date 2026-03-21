@@ -142,7 +142,8 @@ def events():
             payload = {
                 "image_url": f"/images/{state.current_image_name}",
                 "csv_url": f"/images/{state.current_csv_name}",
-                "time": minutesAndSeconds
+                "time": minutesAndSeconds,
+                "difficulty": state.current_difficulty
             }
             yield f"event: ready\ndata: {json.dumps(payload)}\n\n"
 
@@ -175,6 +176,10 @@ def get_leaderboard():
         return jsonify(leaderboard), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+@app.route("/difficulty")
+def get_difficulty():
+    return state.difficultyString
 
 if __name__ == "__main__":
     app.run(debug=True, threaded=True, use_reloader=False)
