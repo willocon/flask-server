@@ -206,4 +206,4 @@ def dijkstra(graph, start_title, dest_title, constraints):
                 dist[next_title] = (new_time, new_remaining_GP)
                 prev[next_title] = current_title
                 heapq.heappush(queue, (new_time, next_title, new_remaining_GP))
-    return float('inf'), 0  # return infinity and 0 steps if no path is found
+    return float('inf'), 0, 0  # return infinity and 0 steps if no path is found
