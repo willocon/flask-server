@@ -32,7 +32,7 @@ def generate_on_startup():
 
     while not reachable:
         # randomly pick an image
-        imageNum = random.randint(1,500)
+        imageNum = random.randint(49,49) # for demo, its at the GE
 
         with open(f"{IMAGE_DIR}/{imageNum}/coords.csv", 'r') as f:
             lines = f.readlines()
@@ -113,7 +113,7 @@ def batch_generate():
 
     while not reachable:
         # randomly pick an image
-        imageNum = random.randint(1,500)
+        imageNum = random.randint(49,49) # for demo, its at the GE
 
         with open(f"{IMAGE_DIR}/{imageNum}/coords.csv", 'r') as f:
             lines = f.readlines()

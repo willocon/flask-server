@@ -92,11 +92,6 @@ class Constraints:
     def __repr__(self):
         return f"Constraints(max_magic_level: {self.max_magic_level}, GP_budget: {self.GP_budget}, fairy_rings: {self.fairy_rings})"
     
-    def subtract_GP(self, amount):
-        if self.GP_budget >= amount:
-            self.GP_budget -= amount
-            return True
-        return False
 
 # only need to put the teleport edges in the csv, the walkable edges are generated.
 # the edges for teleports should be one way from the start node to the destination node. The walkable edges are two way, and the fairy ring edges are two way.
@@ -165,11 +160,11 @@ def connect_fairy_ring_nodes(graph):
 def dijkstra(graph, start_title, dest_title, constraints):
     import heapq
     queue = [(0, start_title, constraints.GP_budget)]  # (current_time, current_node_title, remaining_GP)
-    dist = {start_title: (0, constraints.GP_budget)}  # Track both time and remaining GP for each node
+    dist = {start_title: (0, constraints.GP_budget)}  # track both time and remaining GP for each node
     prev = {}
     while queue:
         current_time, current_title, remaining_GP = heapq.heappop(queue)
-        # Check if we've already found a better path to this node
+        # check if weve already found a better path to this node
         if current_title in dist and current_time > dist[current_title][0]:
             continue
         if current_title == dest_title:
@@ -186,22 +181,22 @@ def dijkstra(graph, start_title, dest_title, constraints):
         for edge in current_node.neighbours:
             next_title = edge.to_node.title
             
-            # Check GP cost for ALL edges (not just teleports)
+            # check GP cost for all edges
             if edge.GP_cost > remaining_GP:
                 continue
             
-            # Check magic level for teleports
+            # check magic level for teleports
             if edge.is_teleport and edge.magic_lvl > constraints.max_magic_level:
                 continue
             
-            # Check fairy ring constraint
+            # check fairy ring constraint
             if edge.is_fairy_ring and not constraints.fairy_rings:
                 continue
 
             new_time = current_time + edge.est_time
             new_remaining_GP = remaining_GP - edge.GP_cost
             
-            # Only update if we found a better path (shorter time) to next_title
+            # only update if we found a better path (shorter time) to next_title
             if next_title not in dist or new_time < dist[next_title][0]:
                 dist[next_title] = (new_time, new_remaining_GP)
                 prev[next_title] = current_title
