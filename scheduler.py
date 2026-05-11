@@ -27,7 +27,7 @@ def generate_on_startup():
 
     state.incrementGameNumber(state.getGameNumber())
 
-    prevX,prevZ = 3221,3218 # set lumbridge as init coords
+    prevX,prevZ = 3166,3465 # set GE as init coords
     reachable = False
 
     while not reachable:
