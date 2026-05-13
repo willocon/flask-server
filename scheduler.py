@@ -27,12 +27,12 @@ def generate_on_startup():
 
     state.incrementGameNumber(state.getGameNumber())
 
-    prevX,prevZ = 3166,3465 # set GE as init coords
+    prevX,prevZ = 3221,3218 # set lumbridge as init coords
     reachable = False
 
     while not reachable:
         # randomly pick an image
-        imageNum = random.randint(49,49) # for demo, its at the GE
+        imageNum = random.randint(1,500)
 
         with open(f"{IMAGE_DIR}/{imageNum}/coords.csv", 'r') as f:
             lines = f.readlines()
@@ -113,7 +113,7 @@ def batch_generate():
 
     while not reachable:
         # randomly pick an image
-        imageNum = random.randint(49,49) # for demo, its at the GE
+        imageNum = random.randint(1,500)
 
         with open(f"{IMAGE_DIR}/{imageNum}/coords.csv", 'r') as f:
             lines = f.readlines()
