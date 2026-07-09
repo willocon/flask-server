@@ -8,6 +8,7 @@ class Player(db.Model):
     __tablename__ = 'players'
     
     id = db.Column(db.Integer, primary_key=True)
+    userid = db.Column(db.String(100), unique=True, nullable=False, index=True)
     username = db.Column(db.String(100), unique=True, nullable=False, index=True)
     total_score = db.Column(db.Integer, default=0, nullable=False)
     total_wins = db.Column(db.Integer, default=0, nullable=False)
@@ -67,11 +68,12 @@ class CurrentGame(db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
     game_number = db.Column(db.Integer, nullable=False)
+    userid = db.Column(db.String(100), nullable=False)
     username = db.Column(db.String(100), nullable=False)
     score = db.Column(db.Integer, nullable=False)
     is_winner = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    
+
     def __repr__(self):
         return f'<CurrentGame {self.username}>'
 

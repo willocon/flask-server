@@ -37,6 +37,7 @@ def evaluatePlayers():
     
     # Process each player's result
     for current_game_entry in current_games:
+        userid = current_game_entry.userid
         username = current_game_entry.username
         score = current_game_entry.score
         is_winner = current_game_entry.is_winner
@@ -46,21 +47,33 @@ def evaluatePlayers():
             game.winner_username = username
         
         # Get or create player
-        player = Player.query.filter_by(username=username).first()
-        if not player:
-            player = Player(
-                username=username,
-                total_score=score,
-                total_wins=1 if is_winner else 0,
-                total_games=1
-            )
-            db.session.add(player)
-            db.session.flush()
+        player = Player.query.filter_by(userid=userid).first()
+        if not player: # a new player or a player from the legacy system
+            player = Player.query.filter_by(username=username).first() # check if username exists (was used as primary key before)
+            if player: # update existing player with new userid
+                #
+                # once all players have been migrated to the new system, this block should be removed
+                #
+                player.userid = userid
+                player.total_score += score
+                player.total_wins += 1 if is_winner else 0
+                player.total_games += 1
+            else: # create a new player
+                player = Player(
+                    userid=userid,
+                    username=username,
+                    total_score=score,
+                    total_wins=1 if is_winner else 0,
+                    total_games=1
+                )
+                db.session.add(player)
+                db.session.flush()
         else:
             # Update player stats
             player.total_score += score
             player.total_wins += 1 if is_winner else 0
             player.total_games += 1
+            player.username = username  # update username in case its changed
         
         # Create game result record
         game_result = GameResult(

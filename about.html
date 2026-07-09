@@ -8,30 +8,40 @@
             padding: 0;
             box-sizing: border-box;
         }
+
+        @font-face {
+            font-family: 'RuneScape';
+            src:url(/static/runescape.ttf)
+        }
         
         body {
-            font-family: Arial, Helvetica, sans-serif;
-            background-color: #3e3529;
+            font-family: 'RuneScape', Arial, Helvetica, sans-serif;
+            font-size: larger;
+            background-color: #000000;
+            background-image: url(/static/bg.jpg);
+            background-position: top;
+            background-repeat: repeat-y;
             color: #e0d5c7;
             padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
-        
+
         .container {
             background-color: #342e24;
             border: 2px solid #1a1611;
             border-radius: 4px;
             padding: 30px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-            max-width: 900px;
+            max-width: 750px;
             width: 100%;
+            opacity: 0.85;
         }
         
         h1 {
             color: #c9a063;
-            font-size: 24px;
+            font-size: xx-large;
             margin-bottom: 20px;
             text-align: center;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
@@ -39,7 +49,7 @@
         
         h2 {
             color: #ffebb5;
-            font-size: 18px;
+            font-size: x-large;
             margin-top: 25px;
             margin-bottom: 15px;
             border-bottom: 1px solid #2a241d;
@@ -100,7 +110,7 @@
             margin-top: 30px;
             text-align: center;
             color: #c9a063;
-            font-size: 12px;
+            font-size: large;
             max-width: 800px;
             width: 100%;
         }
@@ -137,7 +147,7 @@
         <h2>Welcome to Gielinor Travels</h2>
         <p>
             Gielinor Travels is a unique way of testing your knowledge of the world of Old School RuneScape, Gielinor, and your ability to quickly think of the best routes you can take.
-             Each level presents you with a different location in Gielinor, and your task is to identify it as quickly as possible. 
+             Each level presents you with a different location in Gielinor, and your task is to identify it and get there as quickly as possible. 
              The game combines elements of geography, memory, and quick thinking, making it a fun and challenging experience for RuneScape fans and geography enthusiasts alike.
 
         </p>

@@ -53,6 +53,10 @@ def leaderboard_page():
 def privacy_policy_page():
     return send_from_directory(".", "privacypolicy.html")
 
+@app.route("/static/<path:filename>")
+def font(filename):
+    return send_from_directory("static", filename)
+
 @app.route("/join", methods=["POST"])
 def join():
     data = request.json
@@ -93,6 +97,7 @@ def completed():
         # Save to database
         current_game = CurrentGame(
             game_number=state.getGameNumber(),
+            userid = user_id,
             username=username,
             score=score,
             is_winner=True
@@ -105,6 +110,7 @@ def completed():
         # Save to database
         current_game = CurrentGame(
             game_number=state.getGameNumber(),
+            userid = user_id,
             username=username,
             score=score,
             is_winner=False
